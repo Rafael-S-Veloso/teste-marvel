@@ -1,18 +1,24 @@
+/* eslint-disable @next/next/no-img-element */
+// src/pages/search.js
 import { useRouter } from "next/router";
+import Link from "next/link";
 import { useEffect, useState } from "react";
-import styles from "@/styles/Search.module.css";
+import styles from "../styles/characters.module.css";
+import Modal from "../components/Modal";
 
 const API_URL = "http://gateway.marvel.com/v1/public/characters";
-const API_KEY = "06ead66137452ef75685fcdc895a6c0b";
-const HASH = "2774d42849c52a2ec23f9b2298e41e7a";
+const API_KEY = "dfdfc06935a1fe33837da6934f7b5373";
+const HASH = "f5a214e5c63b897dfe0ebc1a1185c936";
 const TS = "1";
 
 function Search() {
   const router = useRouter();
   const { query } = router.query;
   const [characterData, setCharacterData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [selectedCharacter, setSelectedCharacter] = useState(null);
 
   useEffect(() => {
     if (query) {
@@ -21,17 +27,33 @@ function Search() {
   }, [query]);
 
   const fetchCharacterData = async (characterName) => {
+    setLoading(true);
+    setError(null);
+
     try {
       const response = await fetch(
         `${API_URL}?nameStartsWith=${characterName}&ts=${TS}&apikey=${API_KEY}&hash=${HASH}`
       );
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
       const data = await response.json();
       setCharacterData(data.data.results);
-      setLoading(false);
     } catch (error) {
       setError(error);
+    } finally {
       setLoading(false);
     }
+  };
+
+  const openModal = (character) => {
+    setSelectedCharacter(character);
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+    setSelectedCharacter(null);
   };
 
   if (loading) return <p>Loading...</p>;
@@ -39,7 +61,9 @@ function Search() {
 
   return (
     <div className={styles.container}>
-      <h1>Search Results</h1>
+      <Link href="/" passHref>
+        <h1 className={styles.title}>MySuperHero</h1>
+      </Link>
       {characterData && characterData.length > 0 ? (
         characterData.map((character) => (
           <div key={character.id} className={styles.characterCard}>
@@ -47,13 +71,20 @@ function Search() {
               src={`${character.thumbnail.path}.${character.thumbnail.extension}`}
               alt={character.name}
               className={styles.characterImage}
+              onClick={() => openModal(character)}
             />
             <h2>{character.name}</h2>
-            <p>{character.description}</p>
           </div>
         ))
       ) : (
         <p>No characters found</p>
+      )}
+      {modalIsOpen && (
+        <Modal
+          isOpen={modalIsOpen}
+          onClose={closeModal}
+          character={selectedCharacter}
+        />
       )}
     </div>
   );

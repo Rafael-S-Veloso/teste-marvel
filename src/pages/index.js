@@ -11,7 +11,15 @@ function Home() {
   };
 
   const handleSearch = () => {
-    router.push(`/search?query=${inputValue}`);
+    if (inputValue.trim() !== "") {
+      router.push(`/characters?query=${inputValue}`);
+    }
+  };
+
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      handleSearch();
+    }
   };
 
   return (
@@ -22,6 +30,7 @@ function Home() {
           type="text"
           value={inputValue}
           onChange={handleInputChange}
+          onKeyPress={handleKeyPress}
           className={styles.input}
         />
         <button onClick={handleSearch} className={styles.searchButton}>
