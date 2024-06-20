@@ -14,7 +14,7 @@ const TS = "1";
 function Search() {
   const router = useRouter();
   const { query } = router.query;
-  const [characterData, setCharacterData] = useState(null);
+  const [characterData, setCharacterData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -40,7 +40,7 @@ function Search() {
       const data = await response.json();
       setCharacterData(data.data.results);
     } catch (error) {
-      setError(error);
+      setError(error.message);
     } finally {
       setLoading(false);
     }
@@ -57,28 +57,30 @@ function Search() {
   };
 
   if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div className={styles.container}>
       <Link href="/" passHref>
         <h1 className={styles.title}>MySuperHero</h1>
       </Link>
-      {characterData && characterData.length > 0 ? (
-        characterData.map((character) => (
-          <div key={character.id} className={styles.characterCard}>
-            <img
-              src={`${character.thumbnail.path}.${character.thumbnail.extension}`}
-              alt={character.name}
-              className={styles.characterImage}
-              onClick={() => openModal(character)}
-            />
-            <h2>{character.name}</h2>
-          </div>
-        ))
-      ) : (
-        <p>No characters found</p>
-      )}
+      <div className={styles.characterGrid}>
+        {characterData.length > 0 ? (
+          characterData.map((character) => (
+            <div key={character.id} className={styles.characterCard}>
+              <img
+                src={`${character.thumbnail.path}.${character.thumbnail.extension}`}
+                alt={character.name}
+                className={styles.characterImage}
+                onClick={() => openModal(character)}
+              />
+              <h2>{character.name}</h2>
+            </div>
+          ))
+        ) : (
+          <p>Hero not found</p>
+        )}
+      </div>
       {modalIsOpen && (
         <Modal
           isOpen={modalIsOpen}
