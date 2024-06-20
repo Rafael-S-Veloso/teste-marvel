@@ -59,7 +59,7 @@ const CharacterList = () => {
           </div>
         ))}
       </div>
-      {isModalOpen && (
+      {isModalOpen && selectedCharacterId !== null && (
         <Modal
           isOpen={isModalOpen}
           onClose={closeModal}
