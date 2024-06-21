@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import styles from "../styles/characters.module.css";
-import Modal from "../components/Modal";
 
 const API_URL = "http://gateway.marvel.com/v1/public/characters";
 const API_KEY = "dfdfc06935a1fe33837da6934f7b5373";
@@ -17,8 +16,6 @@ function Search() {
   const [characterData, setCharacterData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [selectedCharacter, setSelectedCharacter] = useState(null);
 
   useEffect(() => {
     if (query) {
@@ -46,15 +43,16 @@ function Search() {
     }
   };
 
-  const openModal = (character) => {
-    console.log(character, "character");
-    setSelectedCharacter(character);
-    setModalIsOpen(true);
-  };
-
-  const closeModal = () => {
-    setModalIsOpen(false);
-    setSelectedCharacter(null);
+  const handleCharacterClick = (character) => {
+    router.push({
+      pathname: "/info",
+      query: {
+        id: character.id,
+        name: character.name,
+        description: character.description,
+        thumbnail: `${character.thumbnail.path}.${character.thumbnail.extension}`,
+      },
+    });
   };
 
   if (loading) return <p>Loading...</p>;
@@ -73,20 +71,13 @@ function Search() {
                 src={`${character.thumbnail.path}.${character.thumbnail.extension}`}
                 alt={character.name}
                 className={styles.characterImage}
-                onClick={() => openModal(character)}
+                onClick={() => handleCharacterClick(character)}
               />
             </div>
             <h2>{character.name}</h2>
           </div>
         ))}
       </div>
-      {modalIsOpen && (
-        <Modal
-          isOpen={modalIsOpen}
-          onClose={closeModal}
-          characterId={selectedCharacter}
-        />
-      )}
     </div>
   );
 }
