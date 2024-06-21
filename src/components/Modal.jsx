@@ -1,61 +1,50 @@
 /* eslint-disable @next/next/no-img-element */
-import { useState, useEffect } from 'react';
-import styles from '../styles/modal.module.css';
+import styles from "../styles/modal.module.css";
 
 const Modal = ({ isOpen, onClose, characterId }) => {
-  const [character, setCharacter] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    if (isOpen && characterId) {
-      const fetchCharacter = async () => {
-        setLoading(true);
-        setError(null);
-
-        try {
-          const response = await fetch(`https://gateway.marvel.com:443/v1/public/characters/${characterId}?ts=1&apikey=06ead66137452ef75685fcdc895a6c0b&hash=2774d42849c52a2ec23f9b2298e41e7a`);
-          if (!response.ok) {
-            throw new Error('Failed to fetch character data.');
-          }
-          const data = await response.json();
-          setCharacter(data.data.results[0]);
-        } catch (err) {
-          setError('Failed to fetch character data.');
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      fetchCharacter();
-    }
-  }, [isOpen, characterId]);
-
   if (!isOpen) return null;
-
+  console.log(characterId, "characterId");
   return (
     <div className={styles.overlay}>
       <div className={styles.modal}>
         <button className={styles.closeButton} onClick={onClose}>
           &times;
         </button>
-        {loading ? (
-          <p>Loading...</p>
-        ) : error ? (
-          <p>{error}</p>
-        ) : character ? (
-          <>
-            <img
-              src={`${character.thumbnail.path}.${character.thumbnail.extension}`}
-              alt={character.name}
-              className={styles.modalImage}
-            />
-            <h2>{character.name}</h2>
-            <p>{character.description || 'Description not available.'}</p>
-          </>
-        ) : (
-          <p>No character data available.</p>
-        )}
+        <div>
+          <img
+            src={`${characterId?.thumbnail?.path}.${characterId?.thumbnail?.extension}`}
+            alt={characterId?.name}
+            className={styles.modalImage}
+          />
+          <h2>{characterId?.name}</h2>
+          <p>{characterId?.description || "Description not available."}</p>
+          <div>
+            <h2>COMICS</h2>
+            {characterId.comics.items.map((comic) => {
+              return <p key={comic.id}>{comic.name}</p>;
+            })}
+          </div>
+          <div>
+            <h2>EVENTS</h2>
+            {characterId.events.items.map((event) => {
+              return <p key={event.id}>{event.name || "Não há eventos"}</p>;
+            })}
+          </div>
+          <div>
+            <h2>SERIES</h2>
+            {characterId.events.items.map((serie) => {
+              return <p key={serie.id}>{serie.name || "Não há series"}</p>;
+            })}
+          </div>
+          <div>
+            <h2>STORIES</h2>
+            {characterId.events.items.map((historia) => {
+              return (
+                <p key={historia.id}>{historia.name || "Não há historia"}</p>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );

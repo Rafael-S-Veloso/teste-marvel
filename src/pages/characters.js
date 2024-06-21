@@ -47,6 +47,7 @@ function Search() {
   };
 
   const openModal = (character) => {
+    console.log(character, "character");
     setSelectedCharacter(character);
     setModalIsOpen(true);
   };
@@ -65,27 +66,25 @@ function Search() {
         <h1 className={styles.title}>MySuperHero</h1>
       </Link>
       <div className={styles.characterGrid}>
-        {characterData.length > 0 ? (
-          characterData.map((character) => (
-            <div key={character.id} className={styles.characterCard}>
+        {characterData.map((character) => (
+          <div key={character.id} className={styles.characterCard}>
+            <div className={styles.boxImg}>
               <img
                 src={`${character.thumbnail.path}.${character.thumbnail.extension}`}
                 alt={character.name}
                 className={styles.characterImage}
                 onClick={() => openModal(character)}
               />
-              <h2>{character.name}</h2>
             </div>
-          ))
-        ) : (
-          <p>Hero not found</p>
-        )}
+            <h2>{character.name}</h2>
+          </div>
+        ))}
       </div>
       {modalIsOpen && (
         <Modal
           isOpen={modalIsOpen}
           onClose={closeModal}
-          character={selectedCharacter}
+          characterId={selectedCharacter}
         />
       )}
     </div>
