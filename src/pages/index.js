@@ -24,7 +24,7 @@ function Home() {
 
   return (
     <div className={styles.container}>
-      <p>MySuperHero</p>
+      <h1 className={styles.title}>MySuperHero</h1>
       <div className={styles.inputContainer}>
         <input
           type="text"
