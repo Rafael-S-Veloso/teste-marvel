@@ -12,7 +12,7 @@ function Home() {
 
   const handleSearch = () => {
     if (inputValue.trim() !== "") {
-      router.push(`/characters?query=${inputValue}`);
+      router.push(`/characters?name=${inputValue}`);
     }
   };
 

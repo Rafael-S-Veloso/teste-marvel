@@ -12,16 +12,10 @@ const TS = "1";
 
 function Search() {
   const router = useRouter();
-  const { query } = router.query;
+  const { name } = router.query;
   const [characterData, setCharacterData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  useEffect(() => {
-    if (query) {
-      fetchCharacterData(query);
-    }
-  }, [query]);
 
   const fetchCharacterData = async (characterName) => {
     setLoading(true);
@@ -43,14 +37,17 @@ function Search() {
     }
   };
 
+  useEffect(() => {
+    if (name) {
+      fetchCharacterData(name);
+    }
+  }, [name]);
+
   const handleCharacterClick = (character) => {
     router.push({
       pathname: "/info",
       query: {
         id: character.id,
-        name: character.name,
-        description: character.description,
-        thumbnail: `${character.thumbnail.path}.${character.thumbnail.extension}`,
       },
     });
   };
